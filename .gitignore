@@ -1,0 +1,172 @@
+# ============================================================
+# Python
+# ============================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-link
+.installed.cfg
+lib/
+lib64/
+MANIFEST
+
+# ============================================================
+# PyTorch / Model Dosyaları
+# ============================================================
+*.pth
+*.pt
+*.ckpt
+*.pkl
+*.h5
+*.onnx
+
+# Eğitim geçmişi ve grafikler (büyük dosyalar)
+backend/training_history/plots/
+backend/training_history/*.png
+backend/saved_model/
+
+# ============================================================
+# Veri Setleri (büyük boyutlu)
+# ============================================================
+dataset/
+raw_data/
+data/
+
+# ============================================================
+# Jupyter / Colab
+# ============================================================
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ============================================================
+# Virtual Environments
+# ============================================================
+venv/
+env/
+ENV/
+.env
+.venv
+.ENV
+.venv/
+pythonenv*/
+.python-version
+
+# ============================================================
+# IDEs & Editors
+# ============================================================
+# VSCode
+.vscode/
+*.code-workspace
+
+# PyCharm / JetBrains
+.idea/
+*.iml
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ============================================================
+# İşletim Sistemi
+# ============================================================
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ============================================================
+# Logs & Geçici Dosyalar
+# ============================================================
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+logs/
+log/
+
+# ============================================================
+# Ortam Değişkenleri & Gizli Bilgiler
+# ============================================================
+.env
+.env.*
+*.env
+secrets.json
+config_local.py
+kaggle.json
+
+# ============================================================
+# Flask
+# ============================================================
+instance/
+.webassets-cache
+
+# ============================================================
+# Test & Coverage
+# ============================================================
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+htmlcov/
+nosetests.xml
+test-results/
+
+# ============================================================
+# Diğer
+# ============================================================
+*.csv
+*.xlsx
+*.zip
+*.tar.gz
+*.rar
+*.7z

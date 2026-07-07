@@ -1,0 +1,127 @@
+!pip install torch torchvision Pillow
+
+import os
+import torch
+import torch.nn as nn
+from torchvision import models, transforms
+from PIL import Image
+
+def Predict(file_path):
+    # 1. Kullanılacak cihazı belirle (GPU varsa GPU, yoksa CPU)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(f"Kullanilan cihaz: {device}")
+    
+    # 2. Model dosyasının yolu
+    # (Modelinizin adını 'best_model.pth' olarak değiştirebilir veya burayı güncelleyebilirsiniz)
+    checkpoint_path = 'best_model_efficientnet_v2s.pth' 
+    
+    # 3. Model mimarisini yükle (colab_train_v2.py'daki ile aynı olmalı)
+    weights_pt = models.EfficientNet_V2_S_Weights.IMAGENET1K_V1
+    model = models.efficientnet_v2_s(weights=weights_pt)
+    
+    # Classifier kısmını eğitilmiş modeldeki gibi 8 sınıflı olacak şekilde değiştir
+    in_ft = model.classifier[1].in_features
+    model.classifier[1] = nn.Linear(in_ft, 8) # Sınıf sayımız 8
+    
+    # 4. Eğitilmiş ağırlıkları (weights) modele yükle
+    if not os.path.exists(checkpoint_path):
+        print(f"HATA: {checkpoint_path} dosyasi bulunamadi!")
+        print("Lutfen model dosyasinin bu script ile ayni dizinde oldugundan emin olun.")
+        return
+
+    checkpoint = torch.load(checkpoint_path, map_location=device)
+    model.load_state_dict(checkpoint['model_state_dict'])
+    model.to(device)
+    model.eval() # Tahmin moduna al
+    
+    # Sınıf isimlerini model içinden al (alfabetik sıralı: ['HATCHBACK', 'MICRO', ...])
+    class_names = checkpoint.get('class_names', [
+        'HATCHBACK', 'MICRO', 'OPEN_WHEEL', 'PICKUP', 'SEDAN', 'STATION_WAGON', 'SUV', 'VAN'
+    ])
+    
+    # Hocaların istediği sınıf numaralandırması
+    label_to_id = {
+        'SUV': 1,
+        'VAN': 2,
+        'STATION_WAGON': 3,
+        'MICRO': 4,
+        'OPEN_WHEEL': 5,
+        'SEDAN': 6,
+        'HATCHBACK': 7,
+        'PICKUP': 8,
+        # Alternatif Türkçe / Boşluklu isimlendirme ihtimallerine karşı (güvenlik için)
+        'STATION WAGON': 3,
+        'AÇIK TEKERLEKLİ': 5,
+        'PICK UP': 8
+    }
+    
+    # 5. Görselleri modele uygun hale getirecek Transformasyon (Uygulamanızdaki PadToSquare yöntemi)
+    class PadToSquare:
+        def __init__(self, fill=128):
+            self.fill = fill
+        def __call__(self, img):
+            if img.mode != 'RGB':
+                img = img.convert('RGB')
+            w, h = img.size
+            max_wh = max(w, h)
+            pad_left = (max_wh - w) // 2
+            pad_top = (max_wh - h) // 2
+            pad_right = max_wh - w - pad_left
+            pad_bottom = max_wh - h - pad_top
+            import torchvision.transforms.functional as TF
+            return TF.pad(img, (pad_left, pad_top, pad_right, pad_bottom), fill=self.fill)
+
+    transform = transforms.Compose([
+        PadToSquare(fill=128),         # Arabanın bagaj/ön kısımlarının kesilmesini engeller
+        transforms.Resize((300, 300)), # Daha yüksek çözünürlük
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
+    
+    # 6. Tahminleri kaydedeceğimiz dosyayı aç
+    filename = "/content/Preds.txt"
+    # Eğer lokalde test ediyorsanız yukarıdaki '/content/Preds.txt' satırını yoruma alıp, 
+    # aşağıdaki 'Preds.txt' satırını açabilirsiniz:
+    # filename = "Preds.txt"
+    
+    # Dosya klasörü yoksa (/content/ vs), hata vermemesi için dizini oluştur (lokal testler için de faydalı)
+    os.makedirs(os.path.dirname(filename) if os.path.dirname(filename) else '.', exist_ok=True)
+    
+    f = open(filename, "w", encoding="utf-8")
+    
+    # 7. Resimleri oku, tahmin et ve kaydet
+    print(f"{file_path} klasöründeki resimler okunuyor...")
+    for root, dirs, files in os.walk(file_path):
+        files.sort() # Dosyaları isme göre sırala (opsiyonel)
+        for file in files:
+            # Sadece resim dosyalarını işle
+            if file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.webp')):
+                img_path = os.path.join(root, file)
+                
+                try:
+                    # Resmi aç ve modele uygun formata çevir
+                    img = Image.open(img_path).convert('RGB')
+                    img_t = transform(img).unsqueeze(0).to(device)
+                    
+                    # Tahmin yap
+                    with torch.no_grad():
+                        out = model(img_t)
+                        _, pred_idx = out.max(1)
+                    
+                    # Modelin tahmin ettiği sınıf adını bul (örn: 'SUV')
+                    pred_class_name = class_names[pred_idx.item()]
+                    
+                    # Bu sınıf adını istenilen ID'ye (1-8 arası) çevir
+                    pred_id = label_to_id.get(pred_class_name, 1)
+                    
+                    # Hocaların istediği milimetrik formata uy ve dosyaya yaz
+                    # Format: resim_adi.uzanti | Pred: X
+                    line = f"{file} | Pred: {pred_id}"
+                    print(line)
+                    f.write(line + "\n")
+                    
+                except Exception as e:
+                    print(f"Hata olustu ({file}): {e}")
+    
+    f.close()
+    print(f"\nİşlem tamamlandı! Tahminler {filename} dosyasına kaydedildi.")

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Araba Gövde Tipi Sınıflandırma Sistemi</title>
+    <meta name="description" content="MobileNetV2 tabanlı yapay zeka ile 8 farklı araba gövde tipini sınıflandırın. Canlı tahmin arayüzü." />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <link href="css/styles.css?v=3" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-tint":"#adc6ff","secondary-fixed":"#d3e4fe","primary-container":"#4d8eff",
+                        "secondary":"#b7c8e1","outline-variant":"#424754","on-error":"#690005",
+                        "surface":"#10131a","surface-variant":"#32353c","surface-container-high":"#272a31",
+                        "error":"#ffb4ab","tertiary-fixed-dim":"#ffb786","on-error-container":"#ffdad6",
+                        "primary":"#adc6ff","on-secondary":"#213145","secondary-container":"#3a4a5f",
+                        "on-primary-fixed":"#001a42","primary-fixed-dim":"#adc6ff",
+                        "surface-container-highest":"#32353c","outline":"#8c909f",
+                        "on-secondary-container":"#a9bad3","primary-fixed":"#d8e2ff",
+                        "surface-dim":"#10131a","on-tertiary-fixed-variant":"#723600",
+                        "error-container":"#93000a","surface-bright":"#363941",
+                        "on-secondary-fixed-variant":"#38485d","background":"#10131a",
+                        "surface-container-low":"#191b23","on-primary-fixed-variant":"#004395",
+                        "surface-container-lowest":"#0b0e15","inverse-on-surface":"#2e3038",
+                        "tertiary-fixed":"#ffdcc6","inverse-primary":"#005ac2",
+                        "on-secondary-fixed":"#0b1c30","tertiary-container":"#df7412",
+                        "on-tertiary":"#502400","on-background":"#e1e2ec","on-primary":"#002e6a",
+                        "surface-container":"#1d2027","on-surface-variant":"#c2c6d6",
+                        "on-surface":"#e1e2ec","on-tertiary-fixed":"#311400",
+                        "on-primary-container":"#00285d","secondary-fixed-dim":"#b7c8e1",
+                        "tertiary":"#ffb786","on-tertiary-container":"#461f00","inverse-surface":"#e1e2ec"
+                    },
+                    borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},
+                    spacing:{"gutter":"1.25rem","lg":"2rem","md":"1.5rem","sm":"1rem","base":"4px","xs":"0.5rem","xl":"3rem"},
+                    fontFamily:{"h2":["Geist"],"h1":["Geist"],"body-base":["Geist"],"display":["Geist"],"body-sm":["Geist"],"mono-label":["JetBrains Mono"]},
+                    fontSize:{
+                        "h2":["18px",{"lineHeight":"1.4","fontWeight":"600"}],
+                        "h1":["24px",{"lineHeight":"1.3","fontWeight":"600"}],
+                        "body-base":["14px",{"lineHeight":"1.5","fontWeight":"400"}],
+                        "display":["32px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"700"}],
+                        "body-sm":["12px",{"lineHeight":"1.5","fontWeight":"400"}],
+                        "mono-label":["11px",{"lineHeight":"1","letterSpacing":"0.05em","fontWeight":"500"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex antialiased">
+
+<!-- SideNavBar -->
+<nav class="h-screen w-64 fixed left-0 top-0 flex flex-col py-gutter px-xs overflow-y-auto z-50 forza-sidebar">
+    <div class="px-sm mb-lg border-b border-outline-variant/20 pb-4">
+        <h1 class="forza-title text-[26px] text-white tracking-tight truncate">VisionAI Core</h1>
+        <p class="forza-sub text-[11px] mt-1 truncate">AUTOMOTIVE CV V2.4</p>
+    </div>
+    <ul class="flex flex-col gap-2">
+        <li>
+            <a class="forza-nav-btn forza-nav-btn-active" href="/">
+                <span class="material-symbols-outlined text-[20px]">settings_input_component</span>
+                <span>Live Prediction</span>
+            </a>
+        </li>
+        <li>
+            <a class="forza-nav-btn" href="/performance">
+                <span class="material-symbols-outlined text-[20px]">analytics</span>
+                <span>Model Performance</span>
+            </a>
+        </li>
+        <li>
+            <a class="forza-nav-btn" href="/batch-test">
+                <span class="material-symbols-outlined text-[20px]">fact_check</span>
+                <span>Toplu Test</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+
+<!-- Main Content -->
+<main class="flex-1 ml-64 flex flex-col min-h-screen">
+    <!-- TopAppBar -->
+    <header class="w-full h-14 sticky top-0 z-40 border-b border-outline-variant bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-between px-gutter">
+        <div class="flex items-center gap-md">
+            <span class="font-h2 text-h2 font-black text-primary">Araba Gövde Tipi Sınıflandırma Sistemi</span>
+            <div id="model-status" class="hidden md:flex items-center gap-2 px-3 py-1 bg-surface-container-high rounded-full border border-outline-variant">
+                <span id="status-dot" class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                <span id="status-text" class="font-mono-label text-mono-label text-on-surface">MODEL STATUS: ONLINE</span>
+            </div>
+        </div>
+
+    </header>
+
+    <!-- Dashboard Content -->
+    <div class="flex-1 p-gutter max-w-[1600px] w-full mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+
+            <!-- Left Column -->
+            <div class="lg:col-span-8 flex flex-col gap-gutter">
+
+                <!-- Upload Card -->
+                <section id="upload-section" class="bg-surface-container-low border border-outline-variant rounded-xl p-md">
+                    <div class="flex items-center justify-between mb-sm">
+                        <h2 class="font-h2 text-h2 text-on-surface">Görsel Yükle</h2>
+                        <button id="reset-btn" class="hidden px-3 py-1.5 bg-surface-variant hover:bg-surface-bright text-on-surface font-mono-label text-mono-label rounded border border-outline-variant transition-colors flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">refresh</span>
+                            SIFIRLA
+                        </button>
+                    </div>
+                    <div id="drop-zone" class="drop-zone border border-dashed border-primary bg-primary/5 rounded-lg p-xl flex flex-col items-center justify-center text-center cursor-pointer hover:bg-primary/10 transition-colors duration-200">
+                        <div class="drop-zone-inner flex flex-col items-center">
+                            <span class="material-symbols-outlined text-[48px] text-primary mb-sm drop-icon transition-transform">cloud_upload</span>
+                            <p class="font-body-base text-body-base text-on-surface font-medium">Sınıflandırmak için bir araç görseli sürükleyip bırakın veya tıklayın</p>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Desteklenen formatlar: JPG, PNG, WebP (Max 5MB)</p>
+                            <button id="select-btn" class="mt-md px-4 py-2 bg-inverse-primary text-on-primary rounded-DEFAULT font-body-base text-body-base font-medium flex items-center gap-2 btn-primary">
+                                <span class="material-symbols-outlined text-[16px]">upload_file</span>
+                                Dosya Seç
+                            </button>
+                        </div>
+                    </div>
+                    <input id="file-input" type="file" accept="image/jpeg,image/png,image/webp,image/bmp" class="file-input-hidden" />
+
+                    <!-- Tahmin Yap Butonu (dosya seçildikten sonra görünür) -->
+                    <div id="predict-btn-container" class="hidden mt-md flex items-center justify-between border-t border-outline-variant pt-sm">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-[16px] text-primary">image</span>
+                            <span id="selected-filename" class="font-body-sm text-body-sm text-on-surface-variant truncate max-w-[200px]"></span>
+                        </div>
+                        <button id="predict-btn" class="px-6 py-2.5 bg-primary text-on-primary rounded-DEFAULT font-body-base text-body-base font-bold flex items-center gap-2 hover:brightness-110 active:scale-95 transition-all">
+                            <span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+                            Tahmin Yap
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Results Panel -->
+                <section id="results-section" class="hidden bg-surface-container-low border border-outline-variant rounded-xl p-md">
+                    <!-- Loading Overlay -->
+                    <div id="loading-overlay" class="hidden flex flex-col items-center justify-center py-xl">
+                        <div class="spinner mb-md"></div>
+                        <p class="font-mono-label text-mono-label text-on-surface-variant">Model analiz ediyor...</p>
+                    </div>
+
+                    <div class="flex items-center justify-between mb-md pb-sm border-b border-outline-variant">
+                        <h2 class="font-h2 text-h2 text-on-surface flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">data_object</span>
+                            Sonuçlar
+                        </h2>
+                    </div>
+
+                    <div class="result-content grid grid-cols-1 md:grid-cols-2 gap-md">
+                        <!-- Image View -->
+                        <div class="preview-container relative rounded-lg overflow-hidden border border-outline-variant aspect-video bg-surface-container flex items-center justify-center">
+                            <img id="preview-image" alt="Yüklenen görsel" class="w-full h-full object-cover" src="" />
+                        </div>
+
+                        <!-- Classification Result -->
+                        <div class="flex flex-col justify-center">
+                            <p class="font-mono-label text-mono-label text-on-surface-variant mb-1">BİRİNCİL TAHMİN</p>
+                            <div class="flex items-end gap-3 mb-4">
+                                <h3 id="prediction-label" class="font-display text-display text-primary">—</h3>
+                                <span id="confidence-label" class="font-h1 text-h1 text-surface-tint mb-1">—</span>
+                            </div>
+                            <div class="space-y-3 mt-sm">
+                                <div class="flex items-center justify-between font-mono-label text-mono-label text-on-surface">
+                                    <span>İŞLEME SÜRESİ</span>
+                                    <span id="inference-time">—</span>
+                                </div>
+                                <div class="w-full h-[1px] bg-outline-variant"></div>
+                                <div class="flex items-center justify-between font-mono-label text-mono-label text-on-surface">
+                                    <span>GÖRSEL BOYUTU</span>
+                                    <span id="image-size">—</span>
+                                </div>
+                                <div class="w-full h-[1px] bg-outline-variant"></div>
+                                <div class="flex items-center justify-between font-mono-label text-mono-label text-on-surface">
+                                    <span>MODEL SÜRÜMÜ</span>
+                                    <span id="model-version">CV-BodyType-v2.4</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Probabilities -->
+            <div class="lg:col-span-4">
+                <section class="bg-surface-container-low border border-outline-variant rounded-xl p-md h-full flex flex-col">
+                    <h2 class="font-h2 text-h2 mb-md text-on-surface border-b border-outline-variant pb-sm">Sınıf Olasılıkları</h2>
+                    <!-- Placeholder -->
+                    <div id="prob-placeholder" class="flex flex-col items-center justify-center py-xl text-center flex-1">
+                        <span class="material-symbols-outlined text-[36px] text-on-surface-variant mb-sm">psychology</span>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">Bir görsel yükleyerek<br/>tahmin başlatın</p>
+                    </div>
+                    <!-- Chart.js Bar Chart -->
+                    <div id="prob-chart-wrapper" class="hidden flex-1" style="min-height:300px;">
+                        <canvas id="prob-chart"></canvas>
+                    </div>
+                    <div class="mt-sm p-sm bg-surface-container-high border border-outline-variant rounded-lg">
+                        <p class="font-mono-label text-mono-label text-on-surface-variant flex items-start gap-2">
+                            <span class="material-symbols-outlined text-[16px]">info</span>
+                            Model eşiği %75 olarak ayarlanmıştır. Altındaki değerler manuel inceleme gerektirir.
+                        </p>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="js/app.js?v=3"></script>
+</body>
+</html>

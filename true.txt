@@ -1,0 +1,32 @@
+196a1f16_50066b6c0a654b338f24ecb45f0dc173.jpg | Pred: 1
+43a554f0_images (2).jpg | Pred: 1
+75af4631_images (1).jpg | Pred: 1
+ab2858db_images.jpg | Pred: 1
+05df5b57_images (2).jpg | Pred: 2
+58f9430c_images.jpg | Pred: 2
+7e04cf1a_x_1216_684_17252015305-129fea4e5d9002637e50521f15f7fea0.jpg | Pred: 2
+e7af7136_images (1).jpg | Pred: 2
+2c90ee1f_SW-1.jpg | Pred: 3
+8d7054fb_x_1216_684_05384001553-7b2e40b019c26ab7c3c1bc6101a1add1.jpg | Pred: 3
+e65468f8_91d56c36db944c339d22be84e8277aea.jpg | Pred: 3
+ff8deab9_station-wagon-araba_258892b83.jpg | Pred: 3
+32965cb3_images (1).jpg | Pred: 4
+361f9eae_1.png | Pred: 4
+64bc5e0e_images (2).jpg | Pred: 4
+e4807b68_images.jpg | Pred: 4
+2cee88ce_images.jpg | Pred: 5
+6f825b9c_images (1).jpg | Pred: 5
+758f19ba_images (3).jpg | Pred: 5
+7e086a7f_images (2).jpg | Pred: 5
+6c701247_sedan-arac.jpg | Pred: 6
+a151013b_af37f92657484100bcf90cb452e6f05d.jpg | Pred: 6
+faefbc4f_images.jpg | Pred: 6
+fc537ec4_x_1216_684_05384001488-e8774c7186b51ab6baa6bbbf26eab6e4.jpg | Pred: 6
+89aab7a5_images (2).jpg | Pred: 7
+aaeaf43b_images.jpg | Pred: 7
+acf487e1_images (1).jpg | Pred: 7
+b790919c_corsa-e_02_33rroocmlr.png | Pred: 7
+1d1f1e53_pickup-4x4-arac-kiralama.jpg | Pred: 8
+216562e0_images.jpg | Pred: 8
+bac8f93f_2025_Hilux-GR-Sport-ll_Red-Static_005-1024x683.jpg | Pred: 8
+eb315aed_toyota-hilux-pikap.jpg | Pred: 8

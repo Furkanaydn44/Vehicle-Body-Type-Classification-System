@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html class="dark" lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Model Performans Analizi - VisionAI Core</title>
+    <meta name="description" content="Araba gövde tipi sınıflandırma modelinin performans metrikleri, eğitim grafikleri ve confusion matrix." />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <link href="css/styles.css?v=3" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-tint":"#adc6ff","secondary-fixed":"#d3e4fe","primary-container":"#4d8eff",
+                        "secondary":"#b7c8e1","outline-variant":"#424754","on-error":"#690005",
+                        "surface":"#10131a","surface-variant":"#32353c","surface-container-high":"#272a31",
+                        "error":"#ffb4ab","tertiary-fixed-dim":"#ffb786","on-error-container":"#ffdad6",
+                        "primary":"#adc6ff","on-secondary":"#213145","secondary-container":"#3a4a5f",
+                        "on-primary-fixed":"#001a42","primary-fixed-dim":"#adc6ff",
+                        "surface-container-highest":"#32353c","outline":"#8c909f",
+                        "on-secondary-container":"#a9bad3","primary-fixed":"#d8e2ff",
+                        "surface-dim":"#10131a","on-tertiary-fixed-variant":"#723600",
+                        "error-container":"#93000a","surface-bright":"#363941",
+                        "on-secondary-fixed-variant":"#38485d","background":"#10131a",
+                        "surface-container-low":"#191b23","on-primary-fixed-variant":"#004395",
+                        "surface-container-lowest":"#0b0e15","inverse-on-surface":"#2e3038",
+                        "tertiary-fixed":"#ffdcc6","inverse-primary":"#005ac2",
+                        "on-secondary-fixed":"#0b1c30","tertiary-container":"#df7412",
+                        "on-tertiary":"#502400","on-background":"#e1e2ec","on-primary":"#002e6a",
+                        "surface-container":"#1d2027","on-surface-variant":"#c2c6d6",
+                        "on-surface":"#e1e2ec","on-tertiary-fixed":"#311400",
+                        "on-primary-container":"#00285d","secondary-fixed-dim":"#b7c8e1",
+                        "tertiary":"#ffb786","on-tertiary-container":"#461f00","inverse-surface":"#e1e2ec"
+                    },
+                    borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},
+                    spacing:{"gutter":"1.25rem","lg":"2rem","md":"1.5rem","sm":"1rem","base":"4px","xs":"0.5rem","xl":"3rem"},
+                    fontFamily:{"h2":["Geist"],"h1":["Geist"],"body-base":["Geist"],"display":["Geist"],"body-sm":["Geist"],"mono-label":["JetBrains Mono"]},
+                    fontSize:{
+                        "h2":["18px",{"lineHeight":"1.4","fontWeight":"600"}],
+                        "h1":["24px",{"lineHeight":"1.3","fontWeight":"600"}],
+                        "body-base":["14px",{"lineHeight":"1.5","fontWeight":"400"}],
+                        "display":["32px",{"lineHeight":"1.2","letterSpacing":"-0.02em","fontWeight":"700"}],
+                        "body-sm":["12px",{"lineHeight":"1.5","fontWeight":"400"}],
+                        "mono-label":["11px",{"lineHeight":"1","letterSpacing":"0.05em","fontWeight":"500"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="flex min-h-screen bg-background font-body-base text-body-base antialiased">
+
+<!-- SideNavBar -->
+<nav class="h-screen w-64 fixed left-0 top-0 flex flex-col py-gutter px-xs overflow-y-auto z-50 forza-sidebar">
+    <div class="px-sm mb-lg border-b border-outline-variant/20 pb-4">
+        <h1 class="forza-title text-[26px] text-white tracking-tight truncate">VisionAI Core</h1>
+        <p class="forza-sub text-[11px] mt-1 truncate">AUTOMOTIVE CV V2.4</p>
+    </div>
+    <ul class="flex flex-col gap-2">
+        <li>
+            <a class="forza-nav-btn" href="/">
+                <span class="material-symbols-outlined text-[20px]">settings_input_component</span>
+                <span>Live Prediction</span>
+            </a>
+        </li>
+        <li>
+            <a class="forza-nav-btn forza-nav-btn-active" href="/performance">
+                <span class="material-symbols-outlined text-[20px]">analytics</span>
+                <span>Model Performance</span>
+            </a>
+        </li>
+        <li>
+            <a class="forza-nav-btn" href="/batch-test">
+                <span class="material-symbols-outlined text-[20px]">fact_check</span>
+                <span>Toplu Test</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Main Content -->
+<div class="flex-1 flex flex-col ml-64 bg-background min-h-screen">
+    <!-- TopAppBar -->
+    <header class="bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline-variant w-full h-14 sticky top-0 z-40 flex items-center justify-between px-gutter">
+        <span class="font-h2 text-h2 font-black text-primary">Model Performans Analizi</span>
+
+    </header>
+
+    <!-- Dashboard -->
+    <main class="flex-1 p-gutter overflow-y-auto">
+        <div class="max-w-[1600px] mx-auto flex flex-col gap-lg">
+
+            <!-- Metric Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
+                <!-- Accuracy -->
+                <div class="bg-surface-container border border-outline-variant rounded-DEFAULT p-md flex flex-col gap-sm">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono-label text-mono-label text-on-surface-variant uppercase">Accuracy</span>
+                        <span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+                    </div>
+                    <div class="flex items-baseline gap-xs">
+                        <span id="accuracy-value" class="font-display text-display text-on-surface">--</span>
+                        <span class="font-body-sm text-body-sm text-on-surface-variant">%</span>
+                    </div>
+                    <div class="h-1 w-full bg-surface-variant rounded-full overflow-hidden mt-xs">
+                        <div id="accuracy-bar" class="h-full bg-primary transition-all duration-1000" style="width:0%"></div>
+                    </div>
+                </div>
+                <!-- Precision -->
+                <div class="bg-surface-container border border-outline-variant rounded-DEFAULT p-md flex flex-col gap-sm">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono-label text-mono-label text-on-surface-variant uppercase">Precision</span>
+                        <span class="material-symbols-outlined text-secondary text-[16px]">my_location</span>
+                    </div>
+                    <div class="flex items-baseline gap-xs">
+                        <span id="precision-value" class="font-display text-display text-on-surface">--</span>
+                        <span class="font-body-sm text-body-sm text-on-surface-variant">%</span>
+                    </div>
+                    <div class="h-1 w-full bg-surface-variant rounded-full overflow-hidden mt-xs">
+                        <div id="precision-bar" class="h-full bg-secondary transition-all duration-1000" style="width:0%"></div>
+                    </div>
+                </div>
+                <!-- Recall -->
+                <div class="bg-surface-container border border-outline-variant rounded-DEFAULT p-md flex flex-col gap-sm">
+                    <div class="flex items-center justify-between">
+                        <span class="font-mono-label text-mono-label text-on-surface-variant uppercase">Recall</span>
+                        <span class="material-symbols-outlined text-secondary text-[16px]">keyboard_return</span>
+                    </div>
+                    <div class="flex items-baseline gap-xs">
+                        <span id="recall-value" class="font-display text-display text-on-surface">--</span>
+                        <span class="font-body-sm text-body-sm text-on-surface-variant">%</span>
+                    </div>
+                    <div class="h-1 w-full bg-surface-variant rounded-full overflow-hidden mt-xs">
+                        <div id="recall-bar" class="h-full bg-secondary transition-all duration-1000" style="width:0%"></div>
+                    </div>
+                </div>
+                <!-- F1-Score (Primary) -->
+                <div class="bg-surface-container border border-primary/50 bg-primary/5 rounded-DEFAULT p-md flex flex-col gap-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-xl -mr-10 -mt-10"></div>
+                    <div class="flex items-center justify-between relative z-10">
+                        <span class="font-mono-label text-mono-label text-primary font-bold uppercase">F1-Score (Primary)</span>
+                        <span class="material-symbols-outlined text-primary text-[16px]">stars</span>
+                    </div>
+                    <div class="flex items-baseline gap-xs relative z-10">
+                        <span id="f1-value" class="font-display text-display text-primary">--</span>
+                        <span class="font-body-sm text-body-sm text-primary/70">%</span>
+                    </div>
+                    <div class="h-1 w-full bg-surface-variant rounded-full overflow-hidden mt-xs relative z-10">
+                        <div id="f1-bar" class="h-full bg-primary shadow-[0_0_8px_rgba(173,198,255,0.6)] transition-all duration-1000" style="width:0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-md">
+                <!-- Loss Chart -->
+                <div id="loss-chart-section" class="bg-surface-container border border-outline-variant rounded-DEFAULT flex flex-col h-[380px]">
+                    <div class="p-md border-b border-outline-variant/50 flex justify-between items-center">
+                        <h2 class="font-h2 text-h2 text-on-surface">Eğitim ve Doğrulama Kaybı (Loss)</h2>
+                        <span class="epoch-count font-mono-label text-mono-label text-on-surface-variant bg-surface-variant px-2 py-1 rounded">EPOCHS: --</span>
+                    </div>
+                    <div class="flex-1 p-md chart-container">
+                        <canvas id="loss-chart"></canvas>
+                    </div>
+                </div>
+                <!-- Accuracy Chart -->
+                <div id="accuracy-chart-section" class="bg-surface-container border border-outline-variant rounded-DEFAULT flex flex-col h-[380px]">
+                    <div class="p-md border-b border-outline-variant/50 flex justify-between items-center">
+                        <h2 class="font-h2 text-h2 text-on-surface">Eğitim ve Doğrulama Doğruluğu (Accuracy)</h2>
+                        <span class="epoch-count font-mono-label text-mono-label text-on-surface-variant bg-surface-variant px-2 py-1 rounded">EPOCHS: --</span>
+                    </div>
+                    <div class="flex-1 p-md chart-container">
+                        <canvas id="accuracy-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confusion Matrix -->
+            <div id="confusion-matrix-section" class="bg-surface-container border border-outline-variant rounded-DEFAULT flex flex-col w-full overflow-hidden">
+                <div class="p-md border-b border-outline-variant/50 flex justify-between items-center">
+                    <h2 class="font-h1 text-h1 text-on-surface">Normalize Edilmiş Karışıklık Matrisi</h2>
+                    <span class="font-mono-label text-mono-label text-on-surface-variant">Gerçek vs Tahmin (8 Sınıf)</span>
+                </div>
+                <div class="p-lg overflow-x-auto cm-wrapper">
+                    <div class="min-w-[700px] flex">
+                        <!-- Y-Axis Labels -->
+                        <div id="cm-y-labels" class="w-24 shrink-0 flex flex-col pt-0 pr-2 border-r border-outline-variant/30 gap-1">
+                            <!-- Dinamik -->
+                        </div>
+                        <div class="flex-1 flex flex-col">
+                            <div id="confusion-matrix" class="grid gap-1 flex-1 bg-surface-variant/30 p-1 rounded-sm">
+                                <!-- Dinamik -->
+                                <div class="col-span-full flex flex-col items-center justify-center py-xl">
+                                    <span class="material-symbols-outlined text-[48px] text-on-surface-variant mb-sm">hourglass_empty</span>
+                                    <p class="font-body-base text-body-base text-on-surface-variant">Henüz eğitim verisi mevcut değil.</p>
+                                </div>
+                            </div>
+                            <!-- X-Axis Labels -->
+                            <div id="cm-x-labels" class="grid gap-1 mt-2 border-t border-outline-variant/30 pt-2">
+                                <!-- Dinamik -->
+                            </div>
+                            <div class="text-center mt-12 font-mono-label text-mono-label text-on-surface uppercase tracking-widest">Tahmin Edilen Sınıf</div>
+                        </div>
+                    </div>
+                    <div class="absolute left-0 top-1/2 -rotate-90 origin-center -translate-x-[40%] font-mono-label text-mono-label text-on-surface uppercase tracking-widest hidden md:block">
+                        Gerçek Sınıf
+                    </div>
+                </div>
+            </div>
+
+            <!-- Per-Class Table -->
+            <div class="bg-surface-container border border-outline-variant rounded-DEFAULT overflow-hidden">
+                <div class="p-md border-b border-outline-variant/50">
+                    <h2 class="font-h2 text-h2 text-on-surface">Sınıf Bazlı Metrikler</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-outline-variant bg-surface-container-high">
+                                <th class="py-2 px-3 font-mono-label text-mono-label text-on-surface-variant text-left uppercase">Sınıf</th>
+                                <th class="py-2 px-3 font-mono-label text-mono-label text-on-surface-variant text-center uppercase">Precision</th>
+                                <th class="py-2 px-3 font-mono-label text-mono-label text-on-surface-variant text-center uppercase">Recall</th>
+                                <th class="py-2 px-3 font-mono-label text-mono-label text-primary text-center uppercase font-bold">F1-Score</th>
+                                <th class="py-2 px-3 font-mono-label text-mono-label text-on-surface-variant text-center uppercase">Support</th>
+                            </tr>
+                        </thead>
+                        <tbody id="per-class-table">
+                            <tr>
+                                <td colspan="5" class="py-8 text-center font-body-base text-body-base text-on-surface-variant">Henüz veri yok</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<script src="js/performance.js?v=3"></script>
+</body>
+</html>

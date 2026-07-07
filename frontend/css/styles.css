@@ -1,0 +1,514 @@
+/* ============================
+   VisionAI Core — Ortak Stiller
+   ============================ */
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #10131a;
+}
+::-webkit-scrollbar-thumb {
+    background: #424754;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #8c909f;
+}
+
+/* Geçiş animasyonları */
+* {
+    transition-property: background-color, border-color, color, opacity, transform;
+    transition-duration: 150ms;
+    transition-timing-function: ease-in-out;
+}
+
+/* Drag & Drop alanı */
+.drop-zone {
+    transition: all 0.3s ease;
+}
+.drop-zone.drag-over {
+    border-color: #adc6ff !important;
+    background-color: rgba(173, 198, 255, 0.15) !important;
+    transform: scale(1.01);
+    box-shadow: 0 0 30px rgba(173, 198, 255, 0.1);
+}
+.drop-zone.drag-over .drop-icon {
+    transform: translateY(-4px) scale(1.1);
+}
+
+/* Yükleme spinner */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #424754;
+    border-top-color: #adc6ff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Pulse animasyonu */
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(173, 198, 255, 0.4); }
+    50% { box-shadow: 0 0 20px 4px rgba(173, 198, 255, 0.2); }
+}
+.pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Sonuç kartı giriş animasyonu */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+}
+
+/* Olasılık bar animasyonu */
+@keyframes barGrow {
+    from { width: 0; }
+}
+.animate-bar {
+    animation: barGrow 0.8s ease-out forwards;
+}
+
+/* Fade in */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Confidence badge parıltı */
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+.shimmer {
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(173, 198, 255, 0.1) 50%,
+        transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+}
+
+/* Confusion matrix hücre hover */
+.cm-cell {
+    transition: all 0.15s ease;
+    cursor: default;
+}
+.cm-cell:hover {
+    transform: scale(1.05);
+    z-index: 10;
+    box-shadow: 0 0 12px rgba(173, 198, 255, 0.3);
+}
+
+/* Grafik container */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Gizli dosya input */
+.file-input-hidden {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Preview container */
+.preview-container {
+    position: relative;
+    overflow: hidden;
+}
+.preview-container img {
+    transition: transform 0.3s ease;
+}
+.preview-container:hover img {
+    transform: scale(1.02);
+}
+
+/* Model offline durumu */
+.status-offline {
+    color: #ffb4ab !important;
+}
+.status-offline .status-dot {
+    background-color: #ffb4ab !important;
+    animation: none !important;
+}
+
+/* Buton hover efekti */
+.btn-primary {
+    position: relative;
+    overflow: hidden;
+}
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(255,255,255,0.1) 50%,
+        transparent 100%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+.btn-primary:hover::after {
+    transform: translateX(100%);
+}
+
+/* Nav link aktif durumu */
+.nav-link-active {
+    position: relative;
+}
+.nav-link-active::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 60%;
+    background: #adc6ff;
+    border-radius: 1px;
+}
+
+/* ==========================================================================
+   Forza Horizon 6 Style Navigation
+   ========================================================================== */
+
+/* Slanted Title Style */
+.forza-title {
+    font-family: 'Geist', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-style: italic;
+    letter-spacing: -0.03em;
+    text-shadow: 0 0 20px rgba(255, 0, 85, 0.4);
+}
+
+.forza-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-style: italic;
+    color: #8c909f;
+}
+
+/* Sidebar Styling */
+.forza-sidebar {
+    background: linear-gradient(180deg, rgba(16, 19, 26, 0.96) 0%, rgba(11, 14, 21, 0.99) 100%) !important;
+    border-right: 1px solid rgba(255, 0, 85, 0.25) !important;
+    backdrop-filter: blur(20px);
+    box-shadow: 5px 0 30px rgba(0, 0, 0, 0.6);
+}
+
+/* Forza Navigation Button (Transparent by default, White Text) */
+.forza-nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: #ffffff !important;
+    background-color: transparent !important;
+    border-left: 4px solid transparent;
+    font-family: 'Geist', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-style: italic;
+    letter-spacing: 0.05em;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    border-radius: 0px 4px 4px 0px;
+}
+
+/* Hover effect: opaque grey with a slight sport skew and subtle transition */
+.forza-nav-btn:hover {
+    background-color: rgba(50, 53, 60, 0.95) !important; /* Rich opaque gray */
+    color: #ffffff !important;
+    transform: skewX(-6deg) translateX(4px);
+    border-left-color: rgba(255, 255, 255, 0.5);
+    box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.forza-nav-btn:hover .material-symbols-outlined {
+    transform: rotate(-10deg) scale(1.1);
+    color: #ff0055 !important;
+}
+
+/* Active State: Opaque styling with Neon Pink/Red stripe */
+.forza-nav-btn-active {
+    background: linear-gradient(90deg, rgba(255, 0, 85, 0.2) 0%, rgba(50, 53, 60, 0.5) 100%) !important;
+    color: #ffffff !important;
+    border-left: 4px solid #ff0055 !important; /* Forza Neon Pink */
+    font-weight: 900;
+    transform: skewX(-6deg) translateX(6px);
+    box-shadow: -10px 10px 20px rgba(255, 0, 85, 0.15);
+}
+
+.forza-nav-btn-active .material-symbols-outlined {
+    color: #ff0055 !important;
+    font-variation-settings: 'FILL' 1;
+}
+
+/* Clean standard font transition */
+.forza-nav-btn .material-symbols-outlined {
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+/* ==========================================================================
+   Forza Horizon 6 Smoky (Füme) & 80% Transparency Custom System
+   ========================================================================== */
+
+/* Full Screen Cover Background */
+body {
+    background-image: url('../src/background.png') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+    color: #f1f5f9 !important; /* Muted white text */
+}
+
+/* 80% Transparent Smoky Overrides for Sections and App Containers */
+.forza-sidebar,
+header,
+section,
+.bg-surface-container-low,
+.bg-surface-container,
+.bg-surface-container-high,
+.bg-surface-container-lowest,
+.bg-surface-container-highest,
+.bg-surface {
+    background-color: rgba(30, 33, 40, 0.8) !important; /* Elegant Smoky Gray */
+    background-image: none !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(16px) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+    color: #f1f5f9 !important;
+}
+
+/* Sidebar Specific Smoky Transparent Overrides */
+.forza-sidebar {
+    background: rgba(26, 29, 36, 0.8) !important;
+    border-right: 1px solid rgba(255, 0, 85, 0.25) !important;
+    box-shadow: 5px 0 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Logo headers smoky glow styling */
+.forza-title {
+    color: #ffffff !important;
+    text-shadow: 0 0 20px rgba(255, 0, 85, 0.4) !important;
+}
+.forza-sub {
+    color: #94a3b8 !important; /* Light Slate */
+}
+
+/* Ensure text legibility globally inside content */
+h1, h2, h3, h4, h5, h6,
+.text-on-surface,
+.text-on-background {
+    color: #ffffff !important;
+}
+.text-on-surface-variant {
+    color: #cbd5e1 !important; /* Muted Slate */
+}
+
+/* Forza Navigation Button Overrides for Smoky Transparent Theme */
+.forza-nav-btn {
+    color: #cbd5e1 !important;
+}
+.forza-nav-btn .material-symbols-outlined {
+    color: #94a3b8 !important;
+}
+
+/* Hover: opaque gray in smoky mode */
+.forza-nav-btn:hover {
+    background-color: rgba(66, 71, 84, 0.95) !important; /* Rich opaque gray */
+    color: #ffffff !important;
+    border-left-color: rgba(255, 255, 255, 0.5) !important;
+    box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Active State styling for smoky theme active button */
+.forza-nav-btn-active {
+    background: linear-gradient(90deg, rgba(255, 0, 85, 0.2) 0%, rgba(66, 71, 84, 0.5) 100%) !important;
+    color: #ffffff !important;
+    border-left-color: #ff0055 !important;
+    box-shadow: -10px 10px 20px rgba(255, 0, 85, 0.15) !important;
+}
+
+.forza-nav-btn-active .material-symbols-outlined {
+    color: #ff0055 !important;
+}
+
+/* Sticky top app bar header opacity */
+header {
+    background-color: rgba(26, 29, 36, 0.8) !important;
+    backdrop-filter: blur(12px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+header span {
+    color: #ffffff !important;
+}
+
+/* Tables visual improvements in smoky transparent */
+table th {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #ffffff !important;
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+table td {
+    color: #cbd5e1 !important;
+    border-bottom-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Drop-zone adjustment */
+.drop-zone {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.drop-zone:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Button overrides for smoky mode compatibility */
+#reset-btn {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: #cbd5e1 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+#reset-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ==========================================================================
+   Forza Horizon Neon Red/Pink (#ff0055) Component Overrides
+   ========================================================================== */
+
+/* Buttons: Dosya Seç, Tahmin Yap, Testi Başlat */
+#select-btn,
+#predict-btn,
+#start-test-btn {
+    background-color: #ff0055 !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    font-style: italic !important;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+#select-btn:hover,
+#predict-btn:hover,
+#start-test-btn:hover {
+    background-color: #ff3377 !important; /* Slightly brighter on hover */
+    transform: skewX(-4deg) scale(1.02) !important;
+    box-shadow: 0 6px 20px rgba(255, 0, 85, 0.5) !important;
+}
+
+#select-btn:active,
+#predict-btn:active,
+#start-test-btn:active {
+    transform: scale(0.98) !important;
+}
+
+/* File Input selector buttons on batch test page */
+#true-txt-input::file-selector-button,
+#images-input::file-selector-button {
+    background-color: #ff0055 !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    font-style: italic !important;
+    transition: all 0.2s ease !important;
+    border-radius: 4px !important;
+    cursor: pointer;
+}
+
+#true-txt-input::file-selector-button:hover,
+#images-input::file-selector-button:hover {
+    background-color: #ff3377 !important;
+    transform: skewX(-4deg) !important;
+}
+
+/* Drag & Drop upload zone border and backgrounds */
+.drop-zone {
+    border-color: rgba(255, 0, 85, 0.3) !important;
+    background-color: rgba(255, 0, 85, 0.02) !important;
+    transition: all 0.3s ease !important;
+}
+
+.drop-zone:hover {
+    border-color: #ff0055 !important;
+    background-color: rgba(255, 0, 85, 0.06) !important;
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.1) !important;
+}
+
+.drop-zone .material-symbols-outlined {
+    color: #ff0055 !important;
+}
+
+/* Active drop-zone during file drag over */
+.drop-zone.drag-over {
+    border-color: #ff0055 !important;
+    background-color: rgba(255, 0, 85, 0.12) !important;
+    box-shadow: 0 0 30px rgba(255, 0, 85, 0.2) !important;
+}
+
+/* Prediction results & highlights */
+#prediction-label,
+#confidence-label,
+#inference-time,
+.text-primary,
+#status-dot {
+    color: #ff0055 !important;
+}
+
+#status-dot {
+    background-color: #ff0055 !important;
+}
+
+#total-evaluated {
+    color: #ff0055 !important;
+    border-color: rgba(255, 0, 85, 0.3) !important;
+}
+
+/* Spinners visual match */
+.spinner {
+    border-top-color: #ff0055 !important;
+}
+
+/* Chart bars visual accents */
+.bg-primary {
+    background-color: #ff0055 !important;
+}
+
+
+
