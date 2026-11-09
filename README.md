@@ -8,6 +8,14 @@
 
 **VisionAI Core**, EfficientNetV2-S derin öğrenme modelini kullanan, araç görsellerinden gövde tipini otomatik olarak sınıflandıran bir yapay zeka sistemidir. Flask tabanlı bir REST API, modern bir web arayüzü ve Google Colab eğitim desteğinden oluşmaktadır.
 
+## Proje Katılımcıları
+<a href="https://github.com/numankhy28">
+  <img src="https://avatars.githubusercontent.com/u/219421415?v=4" width="128" height="128" alt="numankhy28 GitHub Profile" />
+</a>
+<a href="https://github.com/Furkanaydn44">
+  <img src="https://avatars.githubusercontent.com/u/174454978?v=4" width="128" height="128" alt="Furkanaydn44 GitHub Profile" />
+</a>
+
 ### 🎯 Desteklenen Sınıflar (8 Kategori)
 
 | ID | Sınıf | Türkçe Adı |
@@ -254,6 +262,14 @@ Bu proje akademik amaçlı geliştirilmiştir.
 ## 📋 About the Project
 
 **VisionAI Core** is an AI-powered vehicle body type classification system built on the **EfficientNetV2-S** deep learning model. It consists of a Flask-based REST API, a modern web interface, and Google Colab training support.
+
+## Contributors
+<a href="https://github.com/numankhy28">
+  <img src="https://avatars.githubusercontent.com/u/219421415?v=4" width="128" height="128" alt="numankhy28 GitHub Profile" />
+</a>
+<a href="https://github.com/Furkanaydn44">
+  <img src="https://avatars.githubusercontent.com/u/174454978?v=4" width="128" height="128" alt="Furkanaydn44 GitHub Profile" />
+</a>
 
 ### 🎯 Supported Classes (8 Categories)
 
